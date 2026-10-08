@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nguyễn Tiến An Huy - Dịch Vụ Làm Link Website</title>
+    <!-- Three.js cho hiệu ứng tuyết rơi 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #00d2ff;
+            --blue-glow: rgba(0, 210, 255, 0.4);
+            --bg-dark: #030a16;
+            --card-bg: rgba(10, 25, 47, 0.85);
+            --gold-yellow: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Canvas 3D Snow */
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            padding: 15px;
+        }
+
+        /* Profile Header Box */
+        .profile-card {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 0 25px var(--blue-glow);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 35px rgba(0, 210, 255, 0.7);
+        }
+
+        .avatar-box {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 15px auto;
+            border-radius: 15px; /* Ô hình vuông bo góc nhẹ */
+            border: 3px solid var(--gold-yellow);
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name-title {
+            color: var(--gold-yellow);
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .zalo-phone {
+            color: #0084ff;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 0 10px rgba(0, 132, 255, 0.4);
+        }
+
+        /* Square Service Cards */
+        .services-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .square-card {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-blue);
+            border-radius: 20px;
+            aspect-ratio: 1 / 1; /* Đảm bảo ô là hình vuông chuẩn */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 0 20px var(--blue-glow);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .square-card:hover {
+            transform: scale(1.02);
+            border-color: #fff;
+        }
+
+        .card-icon {
+            font-size: 38px;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        .card-desc {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: #e6f1ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .card-price {
+            background: linear-gradient(135deg, #00d2ff, #0066ff);
+            color: #fff;
+            font-size: 20px;
+            font-weight: 900;
+            padding: 8px 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px var(--blue-glow);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas Tuyết Rơi 3D -->
+    <canvas id="snow-canvas"></canvas>
+
+    <div class="container">
+        
+        <!-- ĐẦU TRANG: Ô HÌNH VUÔNG CHỨA AVATAR, TÊN MÀU VÀNG & ĐIỀU HƯỚNG ZALO -->
+        <a href="https://zalo.me/0975787858" target="_blank" class="profile-card">
+            <div class="avatar-box">
+                <!-- Ảnh đại diện -->
+                <img src="https://i.ibb.co/L53R02b/avatar.jpg" alt="Nguyễn Tiến An Huy">
+            </div>
+            <div class="name-title">Nguyễn Tiến An Huy</div>
+            <div class="zalo-phone">
+                <i class="fa-solid fa-comment-dots"></i> Zalo: 0975787858
+            </div>
+        </a>
+
+        <!-- CÁC Ô HÌNH VUÔNG DỊCH VỤ -->
+        <div class="services-grid">
+            
+            <!-- GÓI 1: 20K -->
+            <div class="square-card">
+                <div class="card-icon"><i class="fa-solid fa-id-card"></i></div>
+                <div class="card-desc">LÀM LINK VỀ GIỚI THIỆU TRANG CÁ NHÂN, MÃ QR NGÂN HÀNG</div>
+                <div class="card-price">GIÁ 20K</div>
+            </div>
+
+            <!-- GÓI 2: 30K -->
+            <div class="square-card">
+                <div class="card-icon"><i class="fa-solid fa-store"></i></div>
+                <div class="card-desc">LÀM LINK VỀ BÁN HÀNG, BUÔN BÁN, MÃ QR</div>
+                <div class="card-price">GIÁ 30K</div>
+            </div>
+
+            <!-- GÓI 3: 50K UNLIMITED -->
+            <div class="square-card">
+                <div class="card-icon"><i class="fa-solid fa-infinity"></i></div>
+                <div class="card-desc">LÀM LINK VỀ THEO Ý NGƯỜI MUỐN, KHÔNG GIỚI HẠN</div>
+                <div class="card-price">GIÁ 50K</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Hiệu ứng hạt tuyết rơi 3D màu xanh bằng Three.js
+        const canvas = document.getElementById('snow-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+
+        // Tạo các hạt tuyết
+        const particleCount = 500;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 10;
+            positions[i + 1] = (Math.random() - 0.5) * 10;
+            positions[i + 2] = (Math.random() - 0.5) * 10;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            color: 0x00d2ff,
+            size: 0.04,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // Vòng lặp chuyển động
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const posArray = geometry.attributes.position.array;
+            for (let i = 1; i < particleCount * 3; i += 3) {
+                posArray[i] -= 0.008; // Tốc độ rơi
+                if (posArray[i] < -5) {
+                    posArray[i] = 5;
+                }
+            }
+            geometry.attributes.position.needsUpdate = true;
+            particles.rotation.y += 0.001;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Tự động điều chỉnh kích thước khi xoay/thay đổi màn hình
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
